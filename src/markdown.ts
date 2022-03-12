@@ -613,7 +613,7 @@ class SetextHeadingParser implements LeafBlockParser {
 }
 
 const DefaultLeafBlocks: {[name: string]: (cx: BlockContext, leaf: LeafBlock) => LeafBlockParser | null} = {
-  LinkReference(_, leaf) { return leaf.content.charCodeAt(0) == 91 /* '[' */ ? new LinkReferenceParser(leaf) : null },
+  LinkReference(_, leaf) { return leaf.content.charCodeAt(0) == 91 && leaf.content.charCodeAt(1) != 91 /* '[' */ ? new LinkReferenceParser(leaf) : null },
   SetextHeading() { return new SetextHeadingParser }
 }
 
@@ -1444,7 +1444,7 @@ const DefaultInline: {[name: string]: (cx: InlineContext, next: number, pos: num
   },
 
   Link(cx, next, start) {
-    return next == 91 /* '[' */ ? cx.append(new InlineDelimiter(LinkStart, start, start + 1, Mark.Open)) : -1
+    return next == 91 && cx.char(start + 1) != 91 /* '[' */ ? cx.append(new InlineDelimiter(LinkStart, start, start + 1, Mark.Open)) : -1
   },
 
   Image(cx, next, start) {
